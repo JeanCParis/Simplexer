@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
                 result = simplex.getResult(simplexMatrix);
                 outputLog.setText(simplex.getLog());
                 outputResult.setText(convertResultListToString(SimplexMatrixResolver.getUnknownsValue(result, simplexMatrix)));
+                functionsLayout.refresh();
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {

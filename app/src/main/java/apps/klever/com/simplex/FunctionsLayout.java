@@ -49,6 +49,15 @@ public class FunctionsLayout extends LinearLayout {
         functionLayouts.add(functionLayout);
     }
 
+    public void refresh()
+    {
+        simplexMatrix.reset();
+        for(int unknownIndex : unknownsIndexes) {
+            simplexMatrix.addUnknown();
+        }
+
+    }
+
     public void reset()
     {
         functionLayouts = new ArrayList<>();

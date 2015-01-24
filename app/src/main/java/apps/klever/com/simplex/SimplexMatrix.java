@@ -90,11 +90,6 @@ public class SimplexMatrix {
         }
     }
 
-    public void clearAll()
-    {
-        matrix = new ArrayList<List<Float>>();
-    }
-
     public float[][] getMatrix()
     {
         float[][] result = new float[matrix.size()-1][matrix.get(0).size()];
