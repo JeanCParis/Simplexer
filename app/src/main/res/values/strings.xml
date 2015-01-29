@@ -3,5 +3,6 @@
 
     <string name="app_name">Simplexer</string>
     <string name="action_settings">Settings</string>
+    <string name="wrong_input">Only numbers are allowed</string>
 
 </resources>

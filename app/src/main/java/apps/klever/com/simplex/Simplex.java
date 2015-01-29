@@ -1,32 +1,68 @@
 package apps.klever.com.simplex;
 
+import android.util.Log;
+
+import java.util.List;
+
 /**
  * Created by Jean-Christophe on 22/01/2015.
  */
 public class Simplex
 {
     protected String log;
+    protected float[][] originalMatrix, resultMatrix;
+    protected List<Float> unknownsValues;
+    protected float maximizationResult;
 
-    public float[][] getResult(float[][] simplexMatrix) {
+    public Simplex(float[][] simplexMatrix) {
 
+        originalMatrix = copyTo(simplexMatrix);
+        resultMatrix = simplexMatrix;
         log = convertSimplexMatrixToString(simplexMatrix);
 
         int pivotColumnIndex = getPivotColumnIndex(simplexMatrix);
         while (pivotColumnIndex != -1) {
             int pivotRowIndex = getPivotRowIndex(simplexMatrix, pivotColumnIndex);
 
-            simplexMatrix = updatePivotRows(simplexMatrix, pivotRowIndex, pivotColumnIndex);
+            simplexMatrix = updateMatrix(simplexMatrix, pivotRowIndex, pivotColumnIndex);
             updateIndices(simplexMatrix, pivotRowIndex, pivotColumnIndex);
 
             log+=convertSimplexMatrixToString(simplexMatrix);
             pivotColumnIndex = getPivotColumnIndex(simplexMatrix);
         }
 
-        return simplexMatrix;
+        unknownsValues = SimplexMatrixResolver.getUnknownsValue(simplexMatrix, originalMatrix);
+        maximizationResult = getMaxValue(originalMatrix, unknownsValues);
+    }
+
+    public float[][] getOriginalMatrix() {
+        return originalMatrix;
+    }
+
+    public float[][] getResultMatrix() {
+        return resultMatrix;
+    }
+
+    public List<Float> getUnknownsValues() {
+        return unknownsValues;
+    }
+
+    public float getMaximizationResult() {
+        return maximizationResult;
     }
 
     public String getLog() {
         return log;
+    }
+
+    protected String getResultString()
+    {
+        String result = "Max(z) = " + String.format("%.2f",maximizationResult) + "\n";
+        for (int i=0 ; i<unknownsValues.size() ; ++i)
+        {
+            result += "\nX" + (i+1) + " = " + String.format("%.2f",unknownsValues.get(i));
+        }
+        return result;
     }
 
     protected float[][] updateIndices(float[][] simplexMatrix, int pivotRowIndex, int pivotColumnIndex)
@@ -51,12 +87,11 @@ public class Simplex
         return result;
     }
 
-    protected float[][] updatePivotRows(float[][] simplexMatrix, int pivotRowIndex, int pivotColumnIndex)
+    protected float[][] updateMatrix(float[][] simplexMatrix, int pivotRowIndex, int pivotColumnIndex)
     {
         int width = simplexMatrix.length;
         int height = simplexMatrix[width-1].length;
-        float[][] result = new float[width][height];
-        copyTo(simplexMatrix, result);
+        float[][] result = copyTo(simplexMatrix);
         float pivotValue = simplexMatrix[pivotRowIndex][pivotColumnIndex];
 
         for (int row=0 ; row<pivotRowIndex ; ++row)
@@ -80,10 +115,13 @@ public class Simplex
         return result;
     }
 
-    protected void copyTo(float[][] aSource, float[][] aDestination) {
+    protected float[][] copyTo(float[][] aSource)
+    {
+        float[][] copy = new float[aSource.length][aSource[0].length];
         for (int i = 0; i < aSource.length; i++) {
-            System.arraycopy(aSource[i], 0, aDestination[i], 0, aSource[i].length);
+            System.arraycopy(aSource[i], 0, copy[i], 0, aSource[i].length);
         }
+        return copy;
     }
 
     protected int getPivotColumnIndex(float[][] simplexMatrix) {
@@ -120,5 +158,18 @@ public class Simplex
         }
 
         return minIndex;
+    }
+
+    protected float getMaxValue(float[][] simplexMatrix, List<Float> values)
+    {
+        float result=0f;
+
+        for (int i=0 ; i<simplexMatrix[0].length-2-(simplexMatrix.length-1) ; ++i)
+        {
+            result += simplexMatrix[simplexMatrix.length-1][i+1] * values.get(i);
+            Log.i("result" + i, "" + result);
+        }
+
+        return result;
     }
 }

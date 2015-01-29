@@ -26,6 +26,7 @@ public class SimplexMatrixResolver
         {
             if (values.get(i)==null)
             {
+                boolean found = false;
                 //calculate
                 for (int j=0 ; j<simplexResultMatrix.length ; ++j) {
                     if (simplexResultMatrix[j][i+1]!=0)
@@ -37,7 +38,12 @@ public class SimplexMatrixResolver
                         {
                             Log.e("SimpleMatrixResolver calculateValue", e.getMessage());
                         }
+                        found = true;
                     }
+                }
+                if (!found)
+                {
+                    values.set(i, 0f);
                 }
             }
             Log.i("SimplexMatrix values", "i = " + i + " ; value = " + values.get(i));

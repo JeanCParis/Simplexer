@@ -26,10 +26,12 @@ public class FunctionLayout extends LinearLayout {
 
         for (int i=0 ; i<unknownsAmount ; ++i) {
             EditText editText = new EditText(getContext());
+            //editText.setText("0");
             addView(editText, params);
             editTexts.add(editText);
         }
         EditText editText = new EditText(getContext());
+        //editText.setText("0");
         addView(editText, params);
         editTexts.add(editText);
     }
@@ -40,6 +42,7 @@ public class FunctionLayout extends LinearLayout {
         editTexts.remove(result);
         removeView(result);
         EditText editText = new EditText(getContext());
+        //editText.setText("0");
         LinearLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(25, 10, 25, 10);
         addView(editText, params);
@@ -55,18 +58,36 @@ public class FunctionLayout extends LinearLayout {
         removeView(unknown);
     }
 
-    public List<Float> getFunctionValues()
+    public void setValues(List<Float> values)
+    {
+        for(int i=0 ; i<values.size() ; ++i)
+        {
+            editTexts.get(i).setText(values.get(i).toString());
+        }
+    }
+
+    public List<Float> getFunctionValues() throws WrongInputException
     {
         List<Float> function = new ArrayList<>();
         for (EditText editText : editTexts)
         {
-            String value = editText.getText().toString();
-            if (!value.isEmpty()) {
-                function.add(Float.parseFloat(value));
-            } else {
-                function.add(0f);
-            }
+                try {
+                    String valueString = editText.getText().toString();
+                    if (!valueString.isEmpty()) {
+                        float value = 0;
+                        value = Float.parseFloat(valueString);
+                        function.add(value);
+                    } else {
+                        function.add(0f);
+                    }
+                } catch (java.lang.NumberFormatException e)
+                {
+                    throw new WrongInputException();
+                }
+
         }
         return function;
     }
 }
+
+class WrongInputException extends Exception {}

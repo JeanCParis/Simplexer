@@ -1,5 +1,6 @@
 package apps.klever.com.simplex;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -8,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.Arrays;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -18,9 +19,20 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TextView outputLog = (TextView)findViewById(R.id.outputLog);
         final TextView outputResult = (TextView)findViewById(R.id.outputResult);
+        final TextView outputLog = (TextView)findViewById(R.id.outputLog);
         final FunctionsLayout functionsLayout = (FunctionsLayout)findViewById(R.id.main_layout_functions);
+
+        functionsLayout.addFunction();
+        functionsLayout.addFunction();
+        functionsLayout.addFunction();
+        functionsLayout.addUnknown();
+        functionsLayout.addUnknown();
+        functionsLayout.setFunctionValues(0, Arrays.asList(1f, 3f, 450f));
+        functionsLayout.setFunctionValues(1, Arrays.asList(2f, 1f, 350f));
+        functionsLayout.setFunctionValues(2, Arrays.asList(1f, 1f, 200f));
+        functionsLayout.setMaximizeFunctionValues(Arrays.asList(1f, 2f));
+
         final Button addUnknown = (Button)findViewById(R.id.button_add_unknown);
         final Button addFunction = (Button)findViewById(R.id.button_add_function);
         final Button calculate = (Button)findViewById(R.id.button_calculate);
@@ -40,40 +52,42 @@ public class MainActivity extends ActionBarActivity {
         calculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Simplex simplex = new Simplex();
-                float[][] simplexMatrix = functionsLayout.getSimplexMatrix();
-                float[][] result = new float[simplexMatrix.length][simplexMatrix[0].length];
-                copyTo(simplexMatrix, result);
-                result = simplex.getResult(simplexMatrix);
-                outputLog.setText(simplex.getLog());
-                outputResult.setText(convertResultListToString(SimplexMatrixResolver.getUnknownsValue(result, simplexMatrix)));
-                functionsLayout.refresh();
+
+                try {
+                    float[][] simplexMatrix = functionsLayout.getSimplexMatrix();
+                    Simplex simplex = new Simplex(simplexMatrix);
+                    outputResult.setText(simplex.getResultString());
+                    outputLog.setText(simplex.getLog());
+                    functionsLayout.refresh();
+                } catch (WrongInputException e)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Only numbers are allowed").setTitle("Wrong input").setPositiveButton("Ok", null);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                catch (NoUnknownException e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Please add at least one unknown").setTitle("No unknown").setPositiveButton("Ok", null);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                catch (InsufficientConstraintsException e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Please add at least one constraint").setTitle("No unknown").setPositiveButton("Ok", null);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 functionsLayout.reset();
-                outputLog.setText("");
                 outputResult.setText("");
+                outputLog.setText("");
             }
         });
-    }
-
-    protected void copyTo(float[][] aSource, float[][] aDestination) {
-        for (int i = 0; i < aSource.length; i++) {
-            System.arraycopy(aSource[i], 0, aDestination[i], 0, aSource[i].length);
-        }
-    }
-
-    protected String convertResultListToString(List<Float> results)
-    {
-        String result = "";
-        for (int i=0 ; i<results.size() ; ++i)
-        {
-            result += "X" + (i+1) + " : " + String.format("%.2f",results.get(i)) + "\n";
-        }
-        return result;
     }
 
     @Override

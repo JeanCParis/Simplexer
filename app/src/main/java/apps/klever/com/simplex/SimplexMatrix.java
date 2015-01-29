@@ -100,4 +100,14 @@ public class SimplexMatrix {
         }
         return result;
     }
+
+    public int unknownsAmount()
+    {
+        return matrix.get(0).size()-2;
+    }
+
+    public int functionsAmount()
+    {
+        return matrix.size()-1;
+    }
 }

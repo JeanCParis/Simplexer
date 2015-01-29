@@ -13,32 +13,24 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/outputLog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"/>
-            <TextView
-                android:id="@+id/outputResult"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/outputLog"/>
             <LinearLayout
                 android:id="@+id/layout_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/outputResult"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp">
                 <Button
                     android:id="@+id/button_add_unknown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight=".25"
                     android:text="Add Unknown"/>
                 <Button
                     android:id="@+id/button_add_function"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Function"/>
+                    android:layout_weight=".25"
+                    android:text="Add Constraint"/>
                 <Button
                     android:id="@+id/button_calculate"
                     android:layout_width="wrap_content"
@@ -50,13 +42,35 @@
                     android:layout_height="wrap_content"
                     android:text="Reset"/>
             </LinearLayout>
-            <apps.klever.com.simplex.FunctionsLayout
-                android:id="@+id/main_layout_functions"
+            <RelativeLayout
+                android:id="@+id/main_layout_functions_relative"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/layout_buttons"
-                android:layout_marginTop="20dp">
-            </apps.klever.com.simplex.FunctionsLayout>
+                android:layout_marginTop="35dp"
+                android:layout_below="@id/layout_buttons">
+                <apps.klever.com.simplex.FunctionsLayout
+                    android:id="@+id/main_layout_functions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+                </apps.klever.com.simplex.FunctionsLayout>
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/outputResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/main_layout_functions_relative"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                />
+            <TextView
+                android:id="@+id/outputLog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/outputResult"
+                android:layout_marginTop="30dp"
+                />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
